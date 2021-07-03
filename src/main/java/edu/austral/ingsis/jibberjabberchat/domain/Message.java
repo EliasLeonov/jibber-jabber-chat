@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.security.Timestamp;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -23,7 +24,7 @@ public class Message {
     private String senderId;
     private String receiverId;
     private String message;
-    @CreationTimestamp
-    private Timestamp timestamp;
+//    @CreationTimestamp
+    private Date timestamp;
     private MessageStatus status;
 }

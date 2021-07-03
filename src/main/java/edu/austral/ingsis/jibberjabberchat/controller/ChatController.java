@@ -2,7 +2,6 @@ package edu.austral.ingsis.jibberjabberchat.controller;
 
 import edu.austral.ingsis.jibberjabberchat.domain.Message;
 import edu.austral.ingsis.jibberjabberchat.dto.NewMessageDto;
-import edu.austral.ingsis.jibberjabberchat.factory.MessageFactory;
 import edu.austral.ingsis.jibberjabberchat.service.MessageService;
 import edu.austral.ingsis.jibberjabberchat.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
