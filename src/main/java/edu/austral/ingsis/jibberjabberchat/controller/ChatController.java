@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -36,8 +37,22 @@ public class ChatController {
         messagingTemplate.convertAndSendToUser(message.getSenderId(), "/queue/messages", message);
     }
 
+    @MessageMapping("/read")
+    public void processReadChat(@Payload Long messageId){
+        Message message = messageService.getChatMessage(messageId);
+        messageService.markMessageAsRead(message.getId());
+        Message saved = messageService.getChatMessage(messageId);
+        messagingTemplate.convertAndSendToUser(message.getReceiverId(), "/queue/read", saved);
+        messagingTemplate.convertAndSendToUser(message.getSenderId(), "/queue/read", saved);
+    }
+
     @GetMapping("/api/mmesages/{userId}/{loggedId}")
     public Set<Message> findChatMessage(@PathVariable String userId, @PathVariable String loggedId){
+        return messageService.findMessage(userId, loggedId);
+    }
+
+    @GetMapping("/api/message/messages/{userId}/{loggedId}")
+    public Set<Message> findChatMessages(@PathVariable(name = "userId") String userId, @PathVariable(name = "loggedId") String loggedId){
         return messageService.findMessage(userId, loggedId);
     }
 }

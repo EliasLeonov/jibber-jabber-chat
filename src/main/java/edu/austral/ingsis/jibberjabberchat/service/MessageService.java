@@ -35,4 +35,10 @@ public class MessageService {
         String chatId = roomService.getChatId(senderId, receiverId, false);
         return new HashSet<>(repository.findAllByChatId(chatId));
     }
+
+    public void markMessageAsRead(Long id) {
+        Message message = repository.findById(id).orElseThrow(() -> new NotFoundException("Message not found"));
+        message.setStatus(MessageStatus.READ);
+        repository.save(message);
+    }
 }
