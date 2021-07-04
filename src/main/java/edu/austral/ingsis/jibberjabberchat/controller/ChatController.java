@@ -1,6 +1,7 @@
 package edu.austral.ingsis.jibberjabberchat.controller;
 
 import edu.austral.ingsis.jibberjabberchat.domain.Message;
+import edu.austral.ingsis.jibberjabberchat.domain.Room;
 import edu.austral.ingsis.jibberjabberchat.dto.NewMessageDto;
 import edu.austral.ingsis.jibberjabberchat.service.MessageService;
 import edu.austral.ingsis.jibberjabberchat.service.RoomService;
@@ -46,13 +47,13 @@ public class ChatController {
         messagingTemplate.convertAndSendToUser(message.getSenderId(), "/queue/read", saved);
     }
 
-    @GetMapping("/api/mmesages/{userId}/{loggedId}")
-    public Set<Message> findChatMessage(@PathVariable String userId, @PathVariable String loggedId){
+    @GetMapping("/chat/messages/{userId}/{loggedId}")
+    public Set<Message> findChatMessages(@PathVariable(name = "userId") String userId, @PathVariable(name = "loggedId") String loggedId){
         return messageService.findMessage(userId, loggedId);
     }
 
-    @GetMapping("/api/message/messages/{userId}/{loggedId}")
-    public Set<Message> findChatMessages(@PathVariable(name = "userId") String userId, @PathVariable(name = "loggedId") String loggedId){
-        return messageService.findMessage(userId, loggedId);
+    @GetMapping("/chat/all/{userId}")
+    public Set<Room> getAllChats(@PathVariable(name = "userId") String userId){
+        return this.roomService.getAllRooms(userId);
     }
 }

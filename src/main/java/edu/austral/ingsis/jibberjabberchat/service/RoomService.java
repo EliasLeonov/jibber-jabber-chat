@@ -6,6 +6,8 @@ import edu.austral.ingsis.jibberjabberchat.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 public class RoomService {
 
@@ -24,6 +26,11 @@ public class RoomService {
             return chatId;
         }
         return roomRepository.findBySenderIdAndReceiverId(senderId, receiverId).orElseThrow(() -> new NotFoundException("Chat not exist")).getChatId();
+    }
+
+
+    public Set<Room> getAllRooms(String userId){
+        return this.roomRepository.findAllBySenderId(userId);
     }
 
 }
