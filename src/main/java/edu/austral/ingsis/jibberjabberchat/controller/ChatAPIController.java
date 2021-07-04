@@ -5,8 +5,6 @@ import edu.austral.ingsis.jibberjabberchat.domain.Room;
 import edu.austral.ingsis.jibberjabberchat.service.MessageService;
 import edu.austral.ingsis.jibberjabberchat.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +24,6 @@ public class ChatAPIController {
         this.messageService = messageService;
         this.roomService = roomService;
     }
-
-
 
     @GetMapping("/messages/{userId}/{loggedId}")
     public Set<Message> findChatMessages(@PathVariable(name = "userId") String userId, @PathVariable(name = "loggedId") String loggedId){

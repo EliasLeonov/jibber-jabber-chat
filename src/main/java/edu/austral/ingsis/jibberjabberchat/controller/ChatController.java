@@ -12,6 +12,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Set;
@@ -39,11 +41,27 @@ public class ChatController {
     }
 
     @MessageMapping("/read")
-    public void processReadChat(@Payload Long messageId){
+    public void processReadChat(@Payload Long messageId) {
         Message message = messageService.getChatMessage(messageId);
         messageService.markMessageAsRead(message.getId());
         Message saved = messageService.getChatMessage(messageId);
         messagingTemplate.convertAndSendToUser(message.getReceiverId(), "/queue/read", saved);
         messagingTemplate.convertAndSendToUser(message.getSenderId(), "/queue/read", saved);
     }
+//
+//    @GetMapping("/chat/messages/{userId}/{loggedId}")
+//    public Set<Message> findChatMessages(@PathVariable(name = "userId") String userId, @PathVariable(name = "loggedId") String loggedId){
+//        return messageService.findMessage(userId, loggedId);
+//    }
+//
+//    @GetMapping("/chat/all/{userId}")
+//    public Set<Room> getAllChats(@PathVariable(name = "userId") String userId){
+//        return this.roomService.getAllRooms(userId);
+//    }
+
+//    @GetMapping("/api/message/messages/{userId}/{loggedId}/count")
+//    fun countNewMessages(@PathVariable userId: String, @PathVariable loggedId: String): ResponseEntity<Long> {
+//        return ResponseEntity.ok(chatMessageService.countNewMessages(userId, loggedId))
+//    }
+
 }
