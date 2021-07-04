@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 import java.util.Set;
 
-@Controller
+@Controller("chat")
 public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -30,7 +30,7 @@ public class ChatController {
         this.roomService = roomService;
     }
 
-    @MessageMapping("/chat")
+    @MessageMapping("/send")
     public void processMessage(@Payload NewMessageDto newMessage){
         String chatId = roomService.getChatId(newMessage.getSenderId(), newMessage.getReceiverId(), true);
         Message message = messageService.save(newMessage, chatId);
@@ -47,12 +47,12 @@ public class ChatController {
         messagingTemplate.convertAndSendToUser(message.getSenderId(), "/queue/read", saved);
     }
 
-    @GetMapping("/chat/messages/{userId}/{loggedId}")
+    @GetMapping("/chat-api/messages/{userId}/{loggedId}")
     public Set<Message> findChatMessages(@PathVariable(name = "userId") String userId, @PathVariable(name = "loggedId") String loggedId){
         return messageService.findMessage(userId, loggedId);
     }
 
-    @GetMapping("/chat/all/{userId}")
+    @GetMapping("/chat-api/all/{userId}")
     public Set<Room> getAllChats(@PathVariable(name = "userId") String userId){
         return this.roomService.getAllRooms(userId);
     }
