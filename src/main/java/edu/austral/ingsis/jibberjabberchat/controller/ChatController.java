@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 import java.util.Set;
 
+@Controller
 public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
