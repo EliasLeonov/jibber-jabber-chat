@@ -19,7 +19,7 @@ public class RoomService {
     }
 
     public String getChatId(String senderId, String receiverId, Boolean creteIfNotExist){
-        if (creteIfNotExist){
+        if (!this.roomRepository.existsRoomBySenderIdAndReceiverId(senderId, receiverId) && creteIfNotExist){
             String chatId = senderId + receiverId;
             roomRepository.save(Room.builder().chatId(chatId).senderId(senderId).receiverId(receiverId).build());
             roomRepository.save(Room.builder().chatId(chatId).senderId(receiverId).receiverId(senderId).build());

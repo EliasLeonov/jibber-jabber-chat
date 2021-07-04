@@ -9,4 +9,5 @@ import java.util.Set;
 public interface RoomRepository extends JpaRepository<Room, Long> {
     Optional<Room> findBySenderIdAndReceiverId(String senderId, String receiver);
     Set<Room> findAllBySenderId(String senderId);
+    boolean existsRoomBySenderIdAndReceiverId(String senderId, String receiver);
 }
