@@ -5,14 +5,14 @@ import edu.austral.ingsis.jibberjabberchat.domain.Room;
 import edu.austral.ingsis.jibberjabberchat.service.MessageService;
 import edu.austral.ingsis.jibberjabberchat.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/chat-api")
 public class ChatAPIController {
 
@@ -31,8 +31,13 @@ public class ChatAPIController {
     }
 
     @GetMapping("/all/{userId}")
-    public Set<Room> getAllChats(@PathVariable(name = "userId") String userId){
-        return this.roomService.getAllRooms(userId);
+    public List<Room> getAllChats(@PathVariable(name = "userId") String userId){
+        final List<Room> chats = this.roomService.getAllRooms(userId).stream().map(r -> {
+            final long unreadCount = messageService.getUnReadCount(r.getChatId(), userId);
+            r.setUnreadCount(unreadCount);
+            return r;
+        }).collect(Collectors.toList());
+        return chats;
     }
 
 }

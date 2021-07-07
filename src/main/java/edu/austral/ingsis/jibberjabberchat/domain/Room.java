@@ -18,6 +18,8 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String chatId;
+    @Transient
+    private long unreadCount;
     private String senderId;
     private String receiverId;
 }

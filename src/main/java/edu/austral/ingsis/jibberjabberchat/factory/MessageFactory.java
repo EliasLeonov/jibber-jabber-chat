@@ -5,8 +5,7 @@ import edu.austral.ingsis.jibberjabberchat.domain.MessageStatus;
 import edu.austral.ingsis.jibberjabberchat.dto.NewMessageDto;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Component
 public class MessageFactory {
@@ -16,7 +15,7 @@ public class MessageFactory {
                 .senderId(dto.getSenderId())
                 .receiverId(dto.getReceiverId())
                 .message(dto.getMessage())
-                .timestamp(Date.valueOf(LocalDateTime.now().toLocalDate()))
+                .timestamp(new Date())
                 .status(status)
                 .build();
     }

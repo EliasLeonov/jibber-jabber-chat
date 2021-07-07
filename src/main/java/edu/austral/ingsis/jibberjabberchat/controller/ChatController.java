@@ -1,7 +1,9 @@
 package edu.austral.ingsis.jibberjabberchat.controller;
 
+import edu.austral.ingsis.jibberjabberchat.domain.ChatNotification;
 import edu.austral.ingsis.jibberjabberchat.domain.Message;
 import edu.austral.ingsis.jibberjabberchat.domain.Room;
+import edu.austral.ingsis.jibberjabberchat.dto.ChatReadDto;
 import edu.austral.ingsis.jibberjabberchat.dto.NewMessageDto;
 import edu.austral.ingsis.jibberjabberchat.service.MessageService;
 import edu.austral.ingsis.jibberjabberchat.service.RoomService;
@@ -36,32 +38,20 @@ public class ChatController {
     public void processMessage(@Payload NewMessageDto newMessage){
         String chatId = roomService.getChatId(newMessage.getSenderId(), newMessage.getReceiverId(), true);
         Message message = messageService.save(newMessage, chatId);
-        messagingTemplate.convertAndSendToUser(message.getReceiverId(), "/queue/messages", message);
-        messagingTemplate.convertAndSendToUser(message.getSenderId(), "/queue/messages", message);
+
+        final Room receiverChat = this.roomService.getChat(newMessage.getReceiverId(), newMessage.getSenderId());
+        final long receiverUnreadCount = messageService.getUnReadCount(chatId, message.getReceiverId());
+        receiverChat.setUnreadCount(receiverUnreadCount);
+        messagingTemplate.convertAndSendToUser(message.getReceiverId(), "/queue/messages", ChatNotification.builder().message(message).chat(receiverChat).build());
+
+        final Room senderChat = this.roomService.getChat(newMessage.getSenderId(), newMessage.getReceiverId());
+        senderChat.setUnreadCount(0);
+        messagingTemplate.convertAndSendToUser(message.getSenderId(), "/queue/messages", ChatNotification.builder().message(message).chat(senderChat).build());
     }
 
     @MessageMapping("/read")
-    public void processReadChat(@Payload Long messageId) {
-        Message message = messageService.getChatMessage(messageId);
-        messageService.markMessageAsRead(message.getId());
-        Message saved = messageService.getChatMessage(messageId);
-        messagingTemplate.convertAndSendToUser(message.getReceiverId(), "/queue/read", saved);
-        messagingTemplate.convertAndSendToUser(message.getSenderId(), "/queue/read", saved);
+    public void processReadChat(@Payload ChatReadDto chatReadDto) {
+        messageService.markChatAsRead(chatReadDto.getChatId(), chatReadDto.getReceiverId());
     }
-//
-//    @GetMapping("/chat/messages/{userId}/{loggedId}")
-//    public Set<Message> findChatMessages(@PathVariable(name = "userId") String userId, @PathVariable(name = "loggedId") String loggedId){
-//        return messageService.findMessage(userId, loggedId);
-//    }
-//
-//    @GetMapping("/chat/all/{userId}")
-//    public Set<Room> getAllChats(@PathVariable(name = "userId") String userId){
-//        return this.roomService.getAllRooms(userId);
-//    }
-
-//    @GetMapping("/api/message/messages/{userId}/{loggedId}/count")
-//    fun countNewMessages(@PathVariable userId: String, @PathVariable loggedId: String): ResponseEntity<Long> {
-//        return ResponseEntity.ok(chatMessageService.countNewMessages(userId, loggedId))
-//    }
 
 }
