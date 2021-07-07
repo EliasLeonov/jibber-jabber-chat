@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
@@ -36,9 +38,14 @@ public class MessageService {
         return new HashSet<>(repository.findAllByChatId(chatId));
     }
 
-    public void markMessageAsRead(Long id) {
-        Message message = repository.findById(id).orElseThrow(() -> new NotFoundException("Message not found"));
-        message.setStatus(MessageStatus.READ);
-        repository.save(message);
+    public long getUnReadCount(String chatId, String receiverId){
+        return repository.countByReceiverIdAndChatIdAndStatus(receiverId, chatId, MessageStatus.RECEIVED);
+    }
+
+    public void markChatAsRead(String chatId, String receiverId) {
+       repository.findAllByChatIdAndReceiverId(chatId, receiverId).stream().forEach(m -> {
+            m.setStatus(MessageStatus.READ);
+           repository.save(m);
+        });
     }
 }
